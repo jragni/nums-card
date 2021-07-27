@@ -1,10 +1,11 @@
 "use-strict"
 
 const BASE_URL = 'http://deckofcardsapi.com/api';
+
 // Part 1. 
-async function getSingleCard() {
+async function getSingleCard(deckId="new") {
   let params = {count:1};
-  let newDeckURL = BASE_URL + "/deck/new/draw/"
+  let newDeckURL = BASE_URL + `/deck/${deckId}/draw/`;
   
   let response = await axios.get(newDeckURL, params=params);
   const card = response.data.cards;
@@ -31,6 +32,32 @@ async function getTwoCardSameDeck() {
   let r2 = await axios.get(sameDeckUrl, params=params);
   const card2 = r2.data.cards;
   console.log(`${card1[0].value} of ${card1[0].suit} \n ${card2[0].value} of ${card2[0].suit} `);
+}
 
+// Part 2.
 
+async function getNewDeckId() {
+  let newDeckURL = BASE_URL + "/deck/new/shuffle";
+  let response = await axios.get(newDeckURL);
+
+  return response.data.deck_id;
+}
+
+$('button').on("click", drawCard)
+
+let deckId;
+
+async function drawCard(evt){
+  evt.preventDefault();
+
+  if ($('button').attr('gameStart') === "false") {
+    deckId = await getNewDeckId();
+    $('button').attr('gameStart', 'true');
+  } else {
+    let params = {count:1};
+    let response = await axios.get(`${BASE_URL}/deck/${deckId}/draw`, params=params);
+    let cardImgURL = response.data.cards[0].image;
+
+    $('#results').append($('<img>').attr("src", cardImgURL));
+  }
 }
