@@ -9,12 +9,11 @@ async function getSingleCard(deckId="new") {
   
   let response = await axios.get(newDeckURL, params=params);
   const card = response.data.cards;
-  DECK_ID = response.data.deck_id;
+  // DECK_ID = response.data.deck_id;
 
   console.log(`${card[0].value} of ${card[0].suit}`);
 }
 
-getSingleCard();
 // Part 2.
 /* Make a request to the deck of cards API to request a single card from a newly 
 shuffled deck. Once you have the card, make a request to the same API to get 
@@ -52,9 +51,7 @@ $('button').on("click", drawCardAndDisplay)
 let deckId;
 let remaining;
 
-/** d
- * 
- * @param {*} evt 
+/** 
  *
  */
 async function drawCardAndDisplay(evt){
@@ -65,8 +62,7 @@ async function drawCardAndDisplay(evt){
     return;
   }
   // Check if there is a game already being played
-  if (isNewGame()) {
-
+  if ($('button').attr('gameStart') === "false") {
     startGame();
   } else {
 
@@ -75,15 +71,7 @@ async function drawCardAndDisplay(evt){
     let cardImgURL = response.data.cards[0].image;
     remaining = response.data.remaining;
     $('#results').append($('<img>').attr("src", cardImgURL));
-
   }
-}
-
-/** newGame
- * Check if the game is started
- */
-function isNewGame() {
-  return $('button').attr('gameStart') === "false";
 }
 
 async function startGame() {
