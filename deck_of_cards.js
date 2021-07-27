@@ -36,6 +36,10 @@ async function getTwoCardSameDeck() {
 
 // Part 2.
 
+/** getNewDeckId
+ * DESCRIPTION: function that requests a new shuffled deck and returns 
+ * the deck id.
+ */
 async function getNewDeckId() {
   let newDeckURL = BASE_URL + "/deck/new/shuffle";
   let response = await axios.get(newDeckURL);
@@ -43,21 +47,46 @@ async function getNewDeckId() {
   return response.data.deck_id;
 }
 
-$('button').on("click", drawCard)
+$('button').on("click", drawCardAndDisplay)
 
 let deckId;
+let remaining;
 
-async function drawCard(evt){
+/** d
+ * 
+ * @param {*} evt 
+ *
+ */
+async function drawCardAndDisplay(evt){
   evt.preventDefault();
+  
+  // If there are no cards remaining, disable button.
+  if( remaining == 0){
+    return;
+  }
+  // Check if there is a game already being played
+  if (isNewGame()) {
 
-  if ($('button').attr('gameStart') === "false") {
-    deckId = await getNewDeckId();
-    $('button').attr('gameStart', 'true');
+    startGame();
   } else {
+
     let params = {count:1};
     let response = await axios.get(`${BASE_URL}/deck/${deckId}/draw`, params=params);
     let cardImgURL = response.data.cards[0].image;
-
+    remaining = response.data.remaining;
     $('#results').append($('<img>').attr("src", cardImgURL));
+
   }
+}
+
+/** newGame
+ * Check if the game is started
+ */
+function isNewGame() {
+  return $('button').attr('gameStart') === "false";
+}
+
+async function startGame() {
+  deckId = await getNewDeckId();
+  $('button').attr('gameStart', 'true');
 }
